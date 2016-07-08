@@ -1,0 +1,4 @@
+# Set environment variables for CONSUL
+CONSUL=consul.svc.01ac3bd6-520b-49c4-df35-8cb6dd4c93c5.us-sw-1.cns.joyent.com
+#CONSUL=192.168.99.100
+#LOCAL=true
