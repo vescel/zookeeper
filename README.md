@@ -1,7 +1,7 @@
 # vescel/zookeeper: dockerized kafka for Joyent Triton
-vescel/platform is a dockerized [apache kafka](http://kafka.apache.org/) installation for the [Joyent Triton Containers as a Service](https://www.joyent.com/triton) platform that makes use of [Joyent's ContainerPilot](https://www.joyent.com/containerpilot) for container scheduling.
+vescel/zookeeper is a dockerized [apache zookeeper](https://zookeeper.apache.org//) installation for the [Joyent Triton Containers as a Service](https://www.joyent.com/triton) platform that makes use of [Joyent's ContainerPilot](https://www.joyent.com/containerpilot) for container scheduling.
 
-the vescel/zookeeper container has an automated builds available on [dockerhub](https//hub.docker.com/r/vescel)
+the vescel/zookeeper container has an automated builds available on [dockerhub](https://hub.docker.com/r/vescel)
 
 for detail usage (including kafka and kafka-manager) visit https://github.com/vescel/platform
 
