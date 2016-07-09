@@ -1,45 +1,41 @@
+# vescel/zookeeper: dockerized kafka for Joyent Triton
+vescel/platform is a dockerized [apache kafka](http://kafka.apache.org/) installation for the [Joyent Triton Containers as a Service](https://www.joyent.com/triton) platform that makes use of [Joyent's ContainerPilot](https://www.joyent.com/containerpilot) for container scheduling.
 
-1. load zookeeper
-2. load container-pilot
-3. load jq
+the vescel/zookeeper container has an automated builds available on [dockerhub](https//hub.docker.com/r/vescel)
 
+for detail usage (including kafka and kafka-manager) visit https://github.com/vescel/platform
 
-# if there are zero healthy (first one up, not scaled)
-#    use default zoo.cfg
+## How-to
+### local machine prerequsites
+#### Mac OSX
+[docker toolbox](https://www.docker.com/products/docker-toolbox) must be installed. Docker for Mac is still fresh, and I haven't had a chance to work out the network bugs yet, so stick with docker toolbox for now.
 
-# if there is one healthy (restart for some reason, so scaling)
-#   if it's me, add my address to zoo.cfg
+### Mac OSX Quick Start
+ContainerPilot assumes a dockerized [hashicorp consul](https://www.consul.io/) be running. I use [progrium/consul](https://hub.docker.com/r/progrium/consul/) using the following command:
 
-    # else it's not me, write healthy address and my address to zoo.cfg
-
-# if there are two healthy
-    # if one is me, write healthy addresses to zoo.cfg
-
-    # else not me, write healthy addresses and my address to zoo.cfg
-
-
-
-alternatively, use consul-template to write out template:
-
-1. Register with Consul as 
-
-docker run -d --name=consul gliderlabs/consul-server
+```
 docker run -p 8400:8400 -p 8500:8500 -p 8600:53/udp -h node1 progrium/consul -server -bootstrap -ui-dir /ui
+```
+this command will launch a single consul instance (sufficient for development) that will have the consul UI available on port 8500 of the local machine at: 
 
-consul-template -consul http://192.168.99.100:8500 -template /opt/zookeeper/zoo.cfg.ctmpl -once
+```
+docker-machine ip default
+```
 
+Clone this repository to your local machine. cd into vescel/kafka and run the following command to create the required ENV file
 
-curl -s -X GET http://{$CONSUL}:8500/v1/kv/zookeeper?recurse | jq length
+```
+./env.sh local
+```
 
-curl -X PUT -d 'test1' http://{$CONSUL}:8500/v1/kv/zookeeper/server1?acquire=8298855f-155c-5ad7-d42f-d86c2c688c23
+confirm that a file with name _env exists in the local directory, then run:
 
-curl -s -X GET http://{$CONSUL}:8500/v1/kv/zookeeper/server1?raw
+```
+docker-compose up
+```
+this will create a single instance of zookeeper, available on port 2181.
 
-curl -s -X GET http://{$CONSUL}:8500/v1/kv/zookeeper/server1 | jq '.[] | .Session'
+Scaling to a multiple node installation is accomplished with the following command:
 
-curl -s -X PUT http://{$CONSUL}:8500/v1/session/create
-curl -s -X GET http://{$CONSUL}:8500/v1/session/list
-
-docker run -p 2182:2181 -p 2889:2888 -p 3889:3888 --env-file ./_env -h zookeeper cloudmode/zookeeper
-
-docker run -p 2183:2181 -p 2890:2888 -p 3890:3888 --env-file ./_env -h zookeeper cloudmode/zookeeper
+```
+docker-compose scale zookeeper=3
